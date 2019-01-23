@@ -2,8 +2,12 @@ import random
 import re
 
 class NameGenerator:
+    """
+    Reads in data from a file by separating syllables and segments
+
+    @param file: Opened file containing list of words separated by syllables
+    """
     def __init__(self, file):
-        "Reads in data from a file by separating syllables and segments"
         # Regex that matches a syllable
         # Three segments of a syllable: onset, nucleus, and coda
         syllable_regex = re.compile(r"(y|[^aeiouy]*)([aeiouy]+|$)([^aeiouy]*)")
@@ -47,9 +51,14 @@ class NameGenerator:
                         frequencies[segment] = 1
                     if segment:
                         prev_segment = segment
-        
+
+    """
+    Returns a random key from dictionary based on frequencies
+
+    @param dictionary: dictionary to get key from
+    @return: random key weighted by frequency
+    """
     def get_key(self, dictionary):
-        "Returns a random key from dictionary based on frequencies"
         frequencies = dictionary.values()
         index = random.randrange(sum(frequencies))
         
@@ -59,8 +68,13 @@ class NameGenerator:
             else:
                 index -= frequency
 
+    """
+    Generate a random name using a Markov chain process
+
+    @param num_syllables: number of syllables in the word
+    @return: string containing a randomly generated name
+    """
     def generate_name(self, num_syllables):
-        "Generate a region name using a Markov chain process"
         prev_segment = None
         region_name = ""
         for i in range(num_syllables):
@@ -75,7 +89,7 @@ class NameGenerator:
                 region_name += segment
                 if segment:
                     prev_segment = segment
-        if len(region_name) >= 11:
+        if len(region_name) >= 11: # cull excessively long names
             return None
         return region_name.title()
 
@@ -91,14 +105,19 @@ while True:
     
 generator = NameGenerator(file)
 num_names = int(input("Enter number of names to generate: "))
-
-for i in range(num_names):
+num_generated = 0 # count number of successfully generated names
+num_culled = 0 # count number of unsuccessfully generated names
+while num_generated < num_names:
     num_syllables = generator.get_key(generator.nums_syllables)
     if num_syllables < 2:
         num_syllables = 2
     generated_name = generator.generate_name(num_syllables)
     if generated_name:
         print(generated_name)
-        
+        num_generated += 1
+    else:
+        num_culled += 1
+
+print("Generated", num_generated, "names,", num_culled, "culled")   
 # Pause at end of output
 input("Press ENTER key to exit")
