@@ -2,14 +2,14 @@ import random
 import re
 
 class NameGenerator:
-    """
-    Reads in data from a file by separating syllables and segments
-
-    @param file: Opened file containing list of words separated by syllables
-    """
     def __init__(self, file):
-        # Regex that matches a syllable
-        # Three segments of a syllable: onset, nucleus, and coda
+        """
+        Reads in data from a file by separating syllables and segments
+
+        param file: Opened file containing list of words separated by syllables
+        """
+        
+        # Regex that matches a syllable based on segments (onset, nucleus, and coda)
         syllable_regex = re.compile(r"(y|[^aeiouy]*)([aeiouy]+|$)([^aeiouy]*)")
 
         # List containing dictionaries of segments read from data file.
@@ -29,6 +29,7 @@ class NameGenerator:
             if not line:
                 continue
             
+            # Count number of syllables in the line
             num_syllables = line.count("-") + 1
             if num_syllables in self.nums_syllables:
                 self.nums_syllables[num_syllables] += 1
@@ -52,13 +53,13 @@ class NameGenerator:
                     if segment:
                         prev_segment = segment
 
-    """
-    Returns a random key from dictionary based on frequencies
-
-    @param dictionary: dictionary to get key from
-    @return: random key weighted by frequency
-    """
     def get_key(self, dictionary):
+        """
+        Returns a random key from dictionary based on frequencies
+
+        param dictionary: dictionary to get key from
+        return: random key weighted by frequency
+        """
         frequencies = dictionary.values()
         index = random.randrange(sum(frequencies))
         
@@ -68,13 +69,13 @@ class NameGenerator:
             else:
                 index -= frequency
 
-    """
-    Generate a random name using a Markov chain process
-
-    @param num_syllables: number of syllables in the word
-    @return: string containing a randomly generated name
-    """
     def generate_name(self, num_syllables):
+        """
+        Generate a random name using a Markov chain process
+
+        param num_syllables: number of syllables in the word
+        return: string containing a randomly generated name
+        """
         prev_segment = None
         region_name = ""
         for i in range(num_syllables):
@@ -107,6 +108,8 @@ generator = NameGenerator(file)
 num_names = int(input("Enter number of names to generate: "))
 num_generated = 0 # count number of successfully generated names
 num_culled = 0 # count number of unsuccessfully generated names
+
+# Loop to generate random names
 while num_generated < num_names:
     num_syllables = generator.get_key(generator.nums_syllables)
     if num_syllables < 2:
