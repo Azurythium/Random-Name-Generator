@@ -15,7 +15,6 @@ class NameGenerator:
         """
         
         # regex that matches a syllable based on segments (onset, nucleus, and coda)
-        print(type(file))
         syllable_regex = re.compile(r"(y|[^aeiouy]*)([aeiouy]+|$)([^aeiouy]*)")
 
         # list containing dictionaries of segments read from data file.
